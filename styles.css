@@ -1,0 +1,8 @@
+.player {
+  display: flex;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  height: 200px;
+  width: 300px;
+}
