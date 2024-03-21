@@ -27,44 +27,71 @@ function paintToCanvas() {
   canvas.width = width;
   canvas.height = height;
 
-  return setInterval(() => {
-    function showImage() {
-      ctx.drawImage(video, 0, 0, width, height);
+  let imageFilter = false;
+
+  function apply() {
+    let pixels = ctx.getImageData(0, 0, width, height);
+    pixels = colorEffect2(pixels);
+    ctx.putImageData(pixels, 0, 0);
+  }
+  function showImage() {
+    ctx.drawImage(video, 0, 0, width, height);
+    if (imageFilter) {
+      apply();
     }
-    showImage();
-    //clearTimeout(showImage, 2000);
-    // ---------- take pixels out
-    // let pixels = ctx.getImageData(0, 0, width, height);......
-    /* console.log (millions of pixels data will show) red , green , blue , alpha <---- (order of the pixel) */
+  }
 
-    // ---------- Mess with the pixels
+  imageGetter = setInterval(showImage, 16);
 
-    // pixels = colorEffect1(pixels);
-    // pixels = colorEffect2(pixels);.......
-
-    //pixels = rgbSplit(pixels);
-    //pixels = greenScreen(pixels);
-    //  ctx.globalAlpha = 0.1;    ( <----- must try it  )
-
-    // --------- Put those pixels again
-
-    function putImageData(pixels) {
-      ctx.putImageData(pixels, 0, 0);
+  document.getElementById("changeColor").addEventListener("click", () => {
+    console.log(imageFilter);
+    if (!imageFilter) {
+      imageFilter = true;
+    } else {
+      imageFilter = false;
     }
-    /*const colorInterval = setInterval(putImageData);
-     function myStop() {
-      clearInterval(colorInterval);
-    }/*/
-    // setTimeout(putImageData);
-    document.getElementById("changeColor").addEventListener("click", () => {
-      let pixels = ctx.getImageData(0, 0, width, height);
-      pixels = colorEffect2(pixels);
-      ctx.putImageData(pixels);
-    });
-
-    // ctx.putImageData(pixels, 0, 0);
-  }, 16);
+    console.log(imageFilter);
+  });
 }
+
+//   return setInterval(() => {
+//     function showImage() {
+//       ctx.drawImage(video, 0, 0, width, height);
+//     }
+//     showImage();
+//     //clearTimeout(showImage, 2000);
+//     // ---------- take pixels out
+//     // let pixels = ctx.getImageData(0, 0, width, height);......
+//     /* console.log (millions of pixels data will show) red , green , blue , alpha <---- (order of the pixel) */
+
+//     // ---------- Mess with the pixels
+
+//     // pixels = colorEffect1(pixels);
+//     // pixels = colorEffect2(pixels);.......
+
+//     //pixels = rgbSplit(pixels);
+//     //pixels = greenScreen(pixels);
+//     //  ctx.globalAlpha = 0.1;    ( <----- must try it  )
+
+//     // --------- Put those pixels again
+
+//     function putImageData(pixels) {
+//       ctx.putImageData(pixels, 0, 0);
+//     }
+//     /*const colorInterval = setInterval(putImageData);
+//      function myStop() {
+//       clearInterval(colorInterval);
+//     }/*/
+//     // setTimeout(putImageData);
+//     document.getElementById("changeColor").addEventListener("click", () => {
+//       let pixels = ctx.getImageData(0, 0, width, height);
+//       pixels = colorEffect2(pixels);
+//       ctx.putImageData(pixels);
+//     });
+
+//     // ctx.putImageData(pixels, 0, 0);
+//   }, 16);
+// }
 
 function takePhoto() {
   //  played the clicking sound
