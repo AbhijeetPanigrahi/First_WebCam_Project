@@ -3,6 +3,7 @@ const canvas = document.querySelector(".photo");
 const ctx = canvas.getContext("2d");
 const strip = document.querySelector(".strip");
 const snap = document.querySelector(".snap");
+//const changeColor = document.querySelector(".changeColor");
 
 function getVideo() {
   navigator.mediaDevices
@@ -17,6 +18,8 @@ function getVideo() {
     });
 }
 
+getVideo();
+
 function paintToCanvas() {
   const width = video.videoWidth;
   const height = video.videoHeight;
@@ -25,18 +28,41 @@ function paintToCanvas() {
   canvas.height = height;
 
   return setInterval(() => {
-    ctx.drawImage(video, 0, 0, width, height);
+    function showImage() {
+      ctx.drawImage(video, 0, 0, width, height);
+    }
+    showImage();
+    //clearTimeout(showImage, 2000);
     // ---------- take pixels out
-    let pixels = ctx.getImageData(0, 0, width, height);
+    // let pixels = ctx.getImageData(0, 0, width, height);......
     /* console.log (millions of pixels data will show) red , green , blue , alpha <---- (order of the pixel) */
 
     // ---------- Mess with the pixels
-    //pixels = redEffect(pixels);
+
+    // pixels = colorEffect1(pixels);
+    // pixels = colorEffect2(pixels);.......
+
     //pixels = rgbSplit(pixels);
-    pixels = greenScreen(pixels);
+    //pixels = greenScreen(pixels);
     //  ctx.globalAlpha = 0.1;    ( <----- must try it  )
+
     // --------- Put those pixels again
-    ctx.putImageData(pixels, 0, 0);
+
+    function putImageData(pixels) {
+      ctx.putImageData(pixels, 0, 0);
+    }
+    /*const colorInterval = setInterval(putImageData);
+     function myStop() {
+      clearInterval(colorInterval);
+    }/*/
+    // setTimeout(putImageData);
+    document.getElementById("changeColor").addEventListener("click", () => {
+      let pixels = ctx.getImageData(0, 0, width, height);
+      pixels = colorEffect2(pixels);
+      ctx.putImageData(pixels);
+    });
+
+    // ctx.putImageData(pixels, 0, 0);
   }, 16);
 }
 
@@ -56,10 +82,26 @@ function takePhoto() {
   strip.insertBefore(link, strip.firstChild);
 }
 
-function redEffect(pixels) {
+function colorEffect1(pixels) {
   for (let i = 0; i < pixels.data.length; i += 4) {
-    pixels.data[i + 0] = pixels.data[i + 0] - 100; // red
-    pixels.data[i + 1] = pixels.data[i + 1] - 50; // green
+    pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
+    //pixels.data[i + 1] = pixels.data[i + 1] - 50; // green
+    // pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
+  }
+  return pixels;
+}
+function colorEffect2(pixels) {
+  for (let i = 0; i < pixels.data.length; i += 4) {
+    //pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
+    pixels.data[i + 1] = pixels.data[i + 1] + 100; // green
+    // pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
+  }
+  return pixels;
+}
+function colorEffect3(pixels) {
+  for (let i = 0; i < pixels.data.length; i += 4) {
+    //pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
+    //pixels.data[i + 1] = pixels.data[i + 1] - 50; // green
     pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
   }
   return pixels;
@@ -101,7 +143,5 @@ function greenScreen(pixels) {
   }
   return pixels;
 }
-
-getVideo();
 
 video.addEventListener("canplay", paintToCanvas);
