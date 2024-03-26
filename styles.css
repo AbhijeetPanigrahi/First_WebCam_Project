@@ -6,3 +6,32 @@
   height: 200px;
   width: 300px;
 }
+
+.takePhoto {
+  height: 70px;
+  width: 150px;
+  font-size: 20px;
+  background-color: grey;
+  color: white;
+}
+#GreenColor {
+  height: 70px;
+  width: 150px;
+  font-size: 20px;
+  color: white;
+  background-color: green;
+}
+#RedColor {
+  height: 70px;
+  width: 150px;
+  font-size: 20px;
+  color: white;
+  background-color: red;
+}
+#BlueColor {
+  height: 70px;
+  width: 150px;
+  font-size: 20px;
+  color: white;
+  background-color: blue;
+}

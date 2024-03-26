@@ -20,78 +20,175 @@ function getVideo() {
 
 getVideo();
 
+// function paintToCanvas() {
+//   const width = video.videoWidth;
+//   const height = video.videoHeight;
+//   // console.log(width, height);   (for checking the canvas size & then change it in HTML canvas tag) // it's important
+//   canvas.width = width;
+//   canvas.height = height;
+
+//   let imageFilter = false;
+
+//   function applyGreen() {
+//     let pixels = ctx.getImageData(0, 0, width, height);
+//     pixels = colorEffect2(pixels);
+//     ctx.putImageData(pixels, 0, 0);
+//   }
+//   function applyRed() {
+//     let pixels = ctx.getImageData(0, 0, width, height);
+//     pixels = colorEffect1(pixels);
+//     ctx.putImageData(pixels, 0, 0);
+//   }
+//   function applyBlue() {
+//     let pixels = ctx.getImageData(0, 0, width, height);
+//     pixels = colorEffect3(pixels);
+//     ctx.putImageData(pixels, 0, 0);
+//   }
+//   // function applyRGB() {
+//   //   let pixels = ctx.getImageData(0, 0, width, height);
+//   //   pixels = colorEffect3(pixels);
+//   //   ctx.putImageData(pixels, 0, 0);
+//   // }
+//   function showImage1() {
+//     ctx.drawImage(video, 0, 0, width, height);
+//     if (imageFilter) {
+//       applyGreen();
+//     }
+//   }
+//   function showImage2() {
+//     ctx.drawImage(video, 0, 0, width, height);
+//     if (imageFilter) {
+//       applyRed();
+//     }
+//   }
+//   function showImage3() {
+//     ctx.drawImage(video, 0, 0, width, height);
+//     if (imageFilter) {
+//       applyBlue();
+//     }
+//   }
+
+//   // imageGetter = setInterval(showImage1, 16);
+//   //imageGetter = setInterval(showImage2, 16);
+//   // imageGetter = setInterval(showImage3, 16);
+
+//   document.getElementById("GreenColor").addEventListener("click", () => {
+//     console.log(imageFilter);
+//     if (!imageFilter) {
+//       imageFilter = true;
+//     } else {
+//       imageFilter = false;
+//     }
+//     imageGetter = setInterval(showImage1, 16);
+//     console.log(imageFilter);
+//   });
+
+//   document.getElementById("RedColor").addEventListener("click", () => {
+//     console.log(imageFilter);
+//     if (!imageFilter) {
+//       imageFilter = true;
+//     } else {
+//       imageFilter = false;
+//     }
+//     console.log(imageFilter);
+//   });
+
+//   document.getElementById("BlueColor").addEventListener("click", () => {
+//     console.log(imageFilter);
+//     if (!imageFilter) {
+//       imageFilter = true;
+//     } else {
+//       imageFilter = false;
+//     }
+//     console.log(imageFilter);
+//   });
+// }
+
+let imageFilter = null;
+
 function paintToCanvas() {
   const width = video.videoWidth;
   const height = video.videoHeight;
-  // console.log(width, height);   (for checking the canvas size & then change it in HTML canvas tag) // it's important
   canvas.width = width;
   canvas.height = height;
 
-  let imageFilter = false;
-
-  function apply() {
-    let pixels = ctx.getImageData(0, 0, width, height);
-    pixels = colorEffect2(pixels);
-    ctx.putImageData(pixels, 0, 0);
+  function applyGreen(pixels) {
+    for (let i = 0; i < pixels.data.length; i += 4) {
+      pixels.data[i + 1] = pixels.data[i + 1] + 100; // Green effect
+    }
+    return pixels;
   }
+
+  function applyRed(pixels) {
+    for (let i = 0; i < pixels.data.length; i += 4) {
+      pixels.data[i + 0] = pixels.data[i + 0] + 100; // Red effect
+    }
+    return pixels;
+  }
+
+  function applyBlue(pixels) {
+    for (let i = 0; i < pixels.data.length; i += 4) {
+      pixels.data[i + 2] = pixels.data[i + 2] + 100; // Blue effect
+    }
+    return pixels;
+  }
+
+  function applyFilter() {
+    const pixels = ctx.getImageData(0, 0, width, height);
+    let filteredPixels = pixels;
+
+    switch (imageFilter) {
+      case "green":
+        filteredPixels = applyGreen(pixels);
+        break;
+      case "red":
+        filteredPixels = applyRed(pixels);
+        break;
+      case "blue":
+        filteredPixels = applyBlue(pixels);
+        break;
+      default:
+        break;
+    }
+
+    ctx.putImageData(filteredPixels, 0, 0);
+  }
+
   function showImage() {
     ctx.drawImage(video, 0, 0, width, height);
     if (imageFilter) {
-      apply();
+      applyFilter();
     }
   }
 
-  imageGetter = setInterval(showImage, 16);
-
-  document.getElementById("changeColor").addEventListener("click", () => {
-    console.log(imageFilter);
-    if (!imageFilter) {
-      imageFilter = true;
+  document.getElementById("GreenColor").addEventListener("click", () => {
+    if (imageFilter === "green") {
+      imageFilter = null; // Toggle off
     } else {
-      imageFilter = false;
+      imageFilter = "green"; // Toggle on
     }
-    console.log(imageFilter);
   });
+
+  document.getElementById("RedColor").addEventListener("click", () => {
+    if (imageFilter === "red") {
+      imageFilter = null; // Toggle off
+    } else {
+      imageFilter = "red"; // Toggle on
+    }
+  });
+
+  document.getElementById("BlueColor").addEventListener("click", () => {
+    if (imageFilter === "blue") {
+      imageFilter = null; // Toggle off
+    } else {
+      imageFilter = "blue"; // Toggle on
+    }
+  });
+
+  setInterval(showImage, 16);
 }
 
-//   return setInterval(() => {
-//     function showImage() {
-//       ctx.drawImage(video, 0, 0, width, height);
-//     }
-//     showImage();
-//     //clearTimeout(showImage, 2000);
-//     // ---------- take pixels out
-//     // let pixels = ctx.getImageData(0, 0, width, height);......
-//     /* console.log (millions of pixels data will show) red , green , blue , alpha <---- (order of the pixel) */
-
-//     // ---------- Mess with the pixels
-
-//     // pixels = colorEffect1(pixels);
-//     // pixels = colorEffect2(pixels);.......
-
-//     //pixels = rgbSplit(pixels);
-//     //pixels = greenScreen(pixels);
-//     //  ctx.globalAlpha = 0.1;    ( <----- must try it  )
-
-//     // --------- Put those pixels again
-
-//     function putImageData(pixels) {
-//       ctx.putImageData(pixels, 0, 0);
-//     }
-//     /*const colorInterval = setInterval(putImageData);
-//      function myStop() {
-//       clearInterval(colorInterval);
-//     }/*/
-//     // setTimeout(putImageData);
-//     document.getElementById("changeColor").addEventListener("click", () => {
-//       let pixels = ctx.getImageData(0, 0, width, height);
-//       pixels = colorEffect2(pixels);
-//       ctx.putImageData(pixels);
-//     });
-
-//     // ctx.putImageData(pixels, 0, 0);
-//   }, 16);
-// }
+/*    Screen Shot of the picture in canvas    */
 
 function takePhoto() {
   //  played the clicking sound
@@ -109,39 +206,7 @@ function takePhoto() {
   strip.insertBefore(link, strip.firstChild);
 }
 
-function colorEffect1(pixels) {
-  for (let i = 0; i < pixels.data.length; i += 4) {
-    pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
-    //pixels.data[i + 1] = pixels.data[i + 1] - 50; // green
-    // pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
-  }
-  return pixels;
-}
-function colorEffect2(pixels) {
-  for (let i = 0; i < pixels.data.length; i += 4) {
-    //pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
-    pixels.data[i + 1] = pixels.data[i + 1] + 100; // green
-    // pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
-  }
-  return pixels;
-}
-function colorEffect3(pixels) {
-  for (let i = 0; i < pixels.data.length; i += 4) {
-    //pixels.data[i + 0] = pixels.data[i + 0] + 200; // red
-    //pixels.data[i + 1] = pixels.data[i + 1] - 50; // green
-    pixels.data[i + 2] = pixels.data[i + 2] * 0.5; // blue
-  }
-  return pixels;
-}
-
-function rgbSplit(pixels) {
-  for (let i = 0; i < pixels.data.length; i += 4) {
-    pixels.data[i - 550] = pixels.data[i + 0] + 200; // red
-    pixels.data[i + 100] = pixels.data[i + 1] - 50; // green
-    pixels.data[i - 850] = pixels.data[i + 2] * 0.5; // blue
-  }
-  return pixels;
-}
+/*    Green Screen Effect   */
 
 function greenScreen(pixels) {
   const levels = {};
